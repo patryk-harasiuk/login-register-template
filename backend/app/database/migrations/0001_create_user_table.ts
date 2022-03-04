@@ -13,4 +13,4 @@ export const up = async (knex: Knex) => {
     });
 };
 
-export const down = async (knex: Knex) => {};
+export const down = async (knex: Knex) => knex.schema.dropTable("users");
