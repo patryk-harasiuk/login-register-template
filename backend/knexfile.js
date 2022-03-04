@@ -16,10 +16,10 @@ module.exports = {
         database: process.env.DB_DATABASE,
     },
     migrations: {
-        directory: path.resolve(__dirname, "dist/database/migrations"),
+        directory: path.resolve(__dirname, "dist/app/database/migrations"),
     },
     seeds: {
-        directory: path.resolve(__dirname, "dist/database/seeds"),
+        directory: path.resolve(__dirname, "dist/app/database/seeds"),
     },
 
     ...knexSnakeCaseMappers(),
