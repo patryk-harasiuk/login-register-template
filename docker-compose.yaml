@@ -1,0 +1,15 @@
+version: "3.2"
+services:
+    db:
+        image: postgres:12-alpine
+        container_name: postgres_db
+        environment:
+            POSTGRES_USER: users
+            POSTGRES_PASSWORD: users
+            POSTGRES_DB: users
+        ports:
+            - "5432:5432"
+        volumes:
+            - db-data:/var/lib/postgresql/data
+volumes:
+    db-data:
