@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Response, Request, NextFunction } from "express";
 
 import { createAPIError } from "./lib";
 import {
@@ -7,28 +7,35 @@ import {
     validateRequestPayload,
 } from "./lib";
 import routes from "./routes";
+import Config from "./lib/config";
 
 const app = express();
 
 app.use(express.json({ strict: true }));
 
 for (let route of routes) {
-    app[route.method.toLocaleLowerCase()](route.url, (res, req, next) => {
-        try {
-            if (route.schema)
-                req.body = validateRequestPayload(req.body, route.schema);
+    app[route.method.toLocaleLowerCase()](
+        route.url,
+        async (req: Request, res: Response, next: NextFunction) => {
+            try {
+                if (route.schema)
+                    req.body = await validateRequestPayload(
+                        req.body,
+                        route.schema
+                    );
 
-            const response = route.controller(res, req, next);
+                const response = await route.controller(req, res, next);
 
-            return responseWithSuccess(res, response);
-        } catch (error) {
-            return closeWithError(res, createAPIError(error));
+                return responseWithSuccess(res, response);
+            } catch (error) {
+                return closeWithError(res, createAPIError(error));
+            }
         }
-    });
+    );
 }
 
-app.listen(4000, () => {
-    console.log("⚡ Server listening on port 4000 ⚡");
+app.listen(Config.PORT, () => {
+    console.log(`⚡ Server listening on port ${Config.PORT} ⚡`);
 }).on("error", (error) => {
     console.error(error);
 });

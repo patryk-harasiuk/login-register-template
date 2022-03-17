@@ -1,7 +1,7 @@
 import { Knex } from "knex";
 
 export const up = async (knex: Knex) => {
-    knex.schema.createTable("users", (table) => {
+    return knex.schema.createTable("users", (table) => {
         table.bigIncrements("id").notNullable();
 
         table.string("username").notNullable();
