@@ -1,6 +1,5 @@
 import bcryptjs from "bcryptjs";
-// import { createAPIError } from "../lib";
-import { createUser } from "../database/users";
+import { createUser, findUserByUsername } from "../database/users";
 import { User } from "../types";
 
 export const hashPassword = async (password: string) => {
@@ -20,12 +19,30 @@ export const checkPassword = async (
     return isPasswordCorrect;
 };
 
+const getAndValidateUser = async (username: string, password: string) => {
+    const result = await findUserByUsername(username);
+    if (!result.length) throw new Error("Invalid credentials");
+
+    if (!checkPassword(password, result[0].password))
+        throw new Error("Invalid credentials");
+
+    return result[0];
+};
+
 export const registerUser = async (body: User) => {
     const { password } = body;
 
     const hashedPassword = await hashPassword(password);
 
     const user = await createUser({ ...body, password: hashedPassword });
+
+    return user;
+};
+
+export const loginUser = async (body: User) => {
+    const { username, password } = body;
+
+    const user = await getAndValidateUser(username, password);
 
     return user;
 };

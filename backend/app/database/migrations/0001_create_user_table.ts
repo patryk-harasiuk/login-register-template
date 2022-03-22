@@ -4,7 +4,7 @@ export const up = async (knex: Knex) => {
     return knex.schema.createTable("users", (table) => {
         table.bigIncrements("id").notNullable();
 
-        table.string("username").notNullable();
+        table.string("username").notNullable().unique();
         table.string("password").notNullable();
         table.dateTime("created").defaultTo(knex.raw("NOW()"));
 
