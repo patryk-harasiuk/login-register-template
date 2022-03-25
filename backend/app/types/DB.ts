@@ -1,5 +1,6 @@
 export enum DBTable {
     USERS = "users",
+    REFRESH_TOKENS = "refresh_tokens",
 }
 
 export type DBSchemaUser = {

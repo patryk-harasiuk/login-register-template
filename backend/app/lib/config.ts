@@ -47,4 +47,14 @@ export default class Config {
     public static DB_USER = getConfig("DB_USER", "string");
     public static DB_PASSWORD = getConfig("DB_PASSWORD", "string");
     public static DB_DATABASE = getConfig("DB_DATABASE", "string");
+    public static USER_SECRET = getConfig("USER_SECRET", "string");
+    public static USER_REFRESH_SECRET = getConfig(
+        "USER_REFRESH_SECRET",
+        "string"
+    );
+    public static ACCESS_EXPIRATION = getConfig("ACCESS_EXPIRATION", "string");
+    public static REFRESH_EXPIRATION = getConfig(
+        "REFRESH_EXPIRATION",
+        "string"
+    );
 }

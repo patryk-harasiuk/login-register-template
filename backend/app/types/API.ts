@@ -6,5 +6,6 @@ export type APIRoute = {
     method: HTTPMethod;
     url: string;
     schema?: AnySchema;
+    middleware?: any[];
     controller: (req?: Request, res?: Response, next?: NextFunction) => void;
 };

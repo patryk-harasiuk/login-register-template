@@ -1,4 +1,4 @@
-import { DBSchemaUser, DBTable, User } from "../types";
+import { DBSchemaUser, DBTable, Token, User } from "../types";
 import DB from "./knex";
 
 export const getAllUsers = async (): Promise<DBSchemaUser[]> =>
@@ -13,3 +13,9 @@ export const findUserByUsername = async (
     username: string
 ): Promise<DBSchemaUser[]> =>
     await DB(DBTable.USERS).select("*").where("username", username);
+
+export const insertToken = async (token: Token) =>
+    await DB(DBTable.REFRESH_TOKENS).insert(token);
+
+export const getToken = async (jti: string) =>
+    await DB(DBTable.REFRESH_TOKENS).select("jti").where("jti", jti);
