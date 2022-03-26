@@ -1,10 +1,10 @@
 import Joi from "joi";
 import Config from "../../lib/config";
-import { v4 as uuidv4 } from "uuid";
 import {
     createRefreshToken,
     createAccessToken,
     addTokenToDatabase,
+    decodeToken,
 } from "../../lib/token";
 import { loginUser } from "../../service/user";
 import { HTTPMethod, APIRoute } from "../../types";
@@ -21,19 +21,24 @@ export default {
         const user = await loginUser(userBody);
 
         const accessToken = await createAccessToken(
-            uuidv4(),
+            user.id,
             Config.USER_SECRET
         );
         const refreshToken = await createRefreshToken(
-            uuidv4(),
-            Config.USER_REFRESH_SECRET
+            user.id,
+            Config.USER_SECRET
         );
 
-        addTokenToDatabase(user.id, refreshToken);
+        console.log(refreshToken, "refsresh token");
+
+        const { jti } = await decodeToken(refreshToken, Config.USER_SECRET);
+
+        addTokenToDatabase(user.id, jti);
 
         return {
             user,
             accessToken,
+            refreshToken,
         };
     },
 } as APIRoute;

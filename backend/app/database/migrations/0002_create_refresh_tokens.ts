@@ -6,7 +6,7 @@ export const up = async (knex: Knex) => {
 
         table.uuid("jti").notNullable();
         table
-            .uuid("user_id")
+            .bigint("user_id")
             .notNullable()
             .references("id")
             .inTable("users")
