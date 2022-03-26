@@ -16,6 +16,7 @@ app.use(express.json({ strict: true }));
 for (let route of routes) {
     app[route.method.toLocaleLowerCase()](
         route.url,
+        ...(route.middleware || []),
         async (req: Request, res: Response, next: NextFunction) => {
             try {
                 if (route.schema)

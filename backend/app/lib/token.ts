@@ -6,7 +6,7 @@ import { Request } from "express";
 import Config from "./config";
 import { getToken, insertToken } from "../database/users";
 
-export const createToken = async (
+export const createAccessToken = async (
     id: string,
     hash: string
 ): Promise<string> => {
@@ -18,8 +18,8 @@ export const createToken = async (
 export const decodeToken = async (
     token: string,
     hash: string
-): Promise<Token> => {
-    return new Promise<Token>((resolve, reject) =>
+): Promise<any> => {
+    return new Promise<any>((resolve, reject) =>
         jwt.verify(token, hash, (error, decoded) => {
             if (error && error.name === "TokenExpiredError")
                 return reject(
@@ -64,7 +64,8 @@ export const getTokenFromDatabase = async (jti: string) => {
 };
 
 export const getTokenFromHeader = async (req: Request) => {
-    const token = req.headers.token;
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
 
     if (!token)
         throw new APIError("Auth error: Missing token", HTTPCode.UNAUTHORIZED);
@@ -72,6 +73,6 @@ export const getTokenFromHeader = async (req: Request) => {
     return token;
 };
 
-export const addTokenToDatabase = async (token: Token) => {
-    return await insertToken(token);
+export const addTokenToDatabase = async (userId: string, token: any) => {
+    return await insertToken(userId, token);
 };

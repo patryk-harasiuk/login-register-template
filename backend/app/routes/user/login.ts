@@ -1,4 +1,11 @@
 import Joi from "joi";
+import Config from "../../lib/config";
+import { v4 as uuidv4 } from "uuid";
+import {
+    createRefreshToken,
+    createAccessToken,
+    addTokenToDatabase,
+} from "../../lib/token";
 import { loginUser } from "../../service/user";
 import { HTTPMethod, APIRoute } from "../../types";
 
@@ -13,6 +20,20 @@ export default {
         const userBody = req.body;
         const user = await loginUser(userBody);
 
-        return user;
+        const accessToken = await createAccessToken(
+            uuidv4(),
+            Config.USER_SECRET
+        );
+        const refreshToken = await createRefreshToken(
+            uuidv4(),
+            Config.USER_REFRESH_SECRET
+        );
+
+        addTokenToDatabase(user.id, refreshToken);
+
+        return {
+            user,
+            accessToken,
+        };
     },
 } as APIRoute;
