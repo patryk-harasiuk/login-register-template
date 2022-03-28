@@ -3,7 +3,7 @@ import APIError from "./error";
 import { HTTPCode, Token } from "../types";
 import { Request } from "express";
 import Config from "./config";
-import { getToken, insertToken } from "../database/users";
+import { getToken, insertToken } from "../database/refreshTokens";
 import { v4 as uuidv4 } from "uuid";
 
 export const createAccessToken = async (
@@ -75,4 +75,10 @@ export const getTokenFromHeader = async (req: Request) => {
 
 export const addTokenToDatabase = async (userId: string, jti: string) => {
     return await insertToken(userId, jti);
+};
+
+export const compareJIT = async (decodedJIT: string) => {
+    const { jti } = await getTokenFromDatabase(decodedJIT);
+
+    return decodedJIT === jti;
 };
