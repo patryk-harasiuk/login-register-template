@@ -29,11 +29,9 @@ export default {
             Config.USER_SECRET
         );
 
-        console.log(refreshToken, "refsresh token");
-
         const { jti } = await decodeToken(refreshToken, Config.USER_SECRET);
 
-        addTokenToDatabase(user.id, jti);
+        await addTokenToDatabase(user.id, jti);
 
         return {
             user,

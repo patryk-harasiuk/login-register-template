@@ -10,9 +10,8 @@ export const createAccessToken = async (
     id: string,
     hash: string
 ): Promise<string> => {
-    return jwt.sign({ _id: id }, hash, {
-        // expiresIn: `${Config.ACCESS_EXPIRATION}m`,
-        expiresIn: "10s",
+    return jwt.sign({ id }, hash, {
+        expiresIn: `${Config.ACCESS_EXPIRATION}m`,
         jwtid: uuidv4(),
     });
 };
@@ -45,7 +44,7 @@ export const createRefreshToken = async (
     id: string,
     hash: string
 ): Promise<string> => {
-    return jwt.sign({ _id: id }, hash, {
+    return jwt.sign({ id }, hash, {
         expiresIn: `${Config.REFRESH_EXPIRATION}s`,
         jwtid: uuidv4(),
     });
@@ -54,13 +53,13 @@ export const createRefreshToken = async (
 export const getTokenFromDatabase = async (jti: string) => {
     const tokens = await getToken(jti);
 
-    if (tokens.length)
+    if (tokens.rows.length)
         throw new APIError(
             "Auth error: Could not find token",
             HTTPCode.UNAUTHORIZED
         );
 
-    return tokens[0];
+    return tokens.rows[0];
 };
 
 export const getTokenFromHeader = async (req: Request) => {
@@ -73,12 +72,22 @@ export const getTokenFromHeader = async (req: Request) => {
     return token;
 };
 
-export const addTokenToDatabase = async (userId: string, jti: string) => {
-    return await insertToken(userId, jti);
+export const addTokenToDatabase = async (
+    userId: string,
+    jti: string
+): Promise<void> => {
+    try {
+        await insertToken(userId, jti);
+    } catch (error) {
+        throw new APIError(
+            "DB error: Could not insert token",
+            HTTPCode.INTERNAL_SERVER_ERROR
+        );
+    }
 };
 
-export const compareJIT = async (decodedJIT: string) => {
-    const { jti } = await getTokenFromDatabase(decodedJIT);
+export const compareJTI = async (decodedJTI: string): Promise<boolean> => {
+    const { jti } = await getTokenFromDatabase(decodedJTI);
 
-    return decodedJIT === jti;
+    return decodedJTI === jti;
 };

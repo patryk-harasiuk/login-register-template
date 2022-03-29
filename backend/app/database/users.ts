@@ -13,12 +13,3 @@ export const findUserByUsername = async (
     username: string
 ): Promise<DBSchemaUser[]> =>
     await DB(DBTable.USERS).select("*").where("username", username);
-
-export const insertToken = async (userId: string, jti: string) =>
-    await DB(DBTable.REFRESH_TOKENS)
-        .where("user_id", userId)
-        .del()
-        .insert({ user_id: userId, jti });
-
-export const getToken = async (jti: string) =>
-    await DB(DBTable.REFRESH_TOKENS).select("jti").where("jti", jti);
